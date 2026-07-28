@@ -4,11 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escala de Limpeza - Mairiporã</title>
+  
+  <!-- Importando a fonte Cabin do Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Biblioteca para ler arquivos CSV com segurança -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Cabin', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 font-sans">
+<body class="bg-gray-100 min-h-screen p-4">
 
   <div class="max-w-4xl mx-auto">
     <!-- Cabeçalho -->
@@ -35,7 +47,7 @@
 
     <!-- TELA 2: Detalhes do Departamento -->
     <div id="view-detalhes" class="hidden bg-white p-6 rounded-[28px] shadow-md">
-      <button onclick="voltarParaLista()" class="mb-4 text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
+      <button onclick="voltarParaLista()" class="mb-4 text-lg text-blue-600 hover:underline flex items-center gap-1 font-medium">
         ← Voltar
       </button>
       
@@ -64,7 +76,7 @@
   </div>
 
   <script>
-    // Cole aqui o link do CSV gerado no "Publicar na Web" do Google Sheets
+    // Link do CSV gerado no "Publicar na Web" do Google Sheets
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwlgbpIK46guSX_yzwEkj040NPcv05H4uZsgh-_OR0tROrcC6fBP3VC5BuhGgU8b-BwsQHmEgNPp5F/pub?output=csv";
 
     let dadosDepartamentos = [];
@@ -98,14 +110,12 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-[28px] shadow border border-gray-200 font-bold hover:border-blue-500 hover:shadow-md cursor-pointer transition";
+        card.className = "bg-white p-5 rounded-[28px] shadow border border-gray-300 font-bold";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <h3 class="font-bold text-lg text-gray-800">${dep.nome}</h3>
-            
           </div>
-          
         `;
         container.appendChild(card);
       });
@@ -124,7 +134,7 @@
       const listaUl = document.getElementById("detalhe-voluntarios");
       listaUl.innerHTML = "";
 
-      // Separa os nomes por vírgula na coluna "voluntarios"
+      // Separa os nomes por ponto e vírgula na coluna "voluntarios"
       const listaNomes = dep.voluntarios ? dep.voluntarios.split(";") : [];
 
       if (listaNomes.length === 0 || !dep.voluntarios || dep.voluntarios.trim() === "" || dep.voluntarios.trim() === "-") {
