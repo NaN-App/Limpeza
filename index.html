@@ -61,15 +61,15 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-[25px] border">
         <div>
           <span class="block text-sm text-green-600 uppercase font-bold">Capitão</span>
-          <span id="detalhe-capitao" class="text-base font-semibold text-gray-800"></span>
+          <div id="detalhe-capitao" class="text-base font-semibold text-gray-800"></div>
         </div>
         <div>
           <span class="block text-sm text-green-600 uppercase font-bold">Congregação</span>
-          <span id="detalhe-congregacao" class="text-base font-semibold text-gray-800"></span>
+          <div id="detalhe-congregacao" class="text-base font-semibold text-gray-800"></div>
         </div>
         <div>
           <span class="block text-sm text-green-600 uppercase font-bold">Horário / Instrução</span>
-          <span id="detalhe-instrucoes" class="text-base font-semibold text-gray-800"></span>
+          <div id="detalhe-instrucoes" class="text-base font-semibold text-gray-800"></div>
         </div>
       </div>
 
@@ -117,6 +117,14 @@
 
     let dadosDepartamentos = [];
     let depAtual = null;
+
+    // Função auxiliar para substituir ';' por quebras de linha (<br>) e tratar texto vazio
+    function formatarTexto(texto, mensagemPadrao = "Não especificado.") {
+      if (!texto || texto.trim() === "" || texto.trim() === "-") {
+        return mensagemPadrao;
+      }
+      return texto.replace(/;/g, '<br>');
+    }
 
     // Função para buscar e converter o CSV
     function carregarCSV() {
@@ -166,9 +174,9 @@
       depAtual = dep;
 
       document.getElementById("detalhe-nome").innerText = dep.nome;
-      document.getElementById("detalhe-capitao").innerText = dep.capitao || "A definir";
-      document.getElementById("detalhe-congregacao").innerText = dep.congregacao || "Não informada";
-      document.getElementById("detalhe-instrucoes").innerText = dep.instrucoes || "Sem instruções";
+      document.getElementById("detalhe-capitao").innerHTML = formatarTexto(dep.capitao, "A definir");
+      document.getElementById("detalhe-congregacao").innerHTML = formatarTexto(dep.congregacao, "Não informada");
+      document.getElementById("detalhe-instrucoes").innerHTML = formatarTexto(dep.instrucoes, "Sem instruções");
 
       const listaUl = document.getElementById("detalhe-voluntarios");
       listaUl.innerHTML = "";
@@ -182,7 +190,7 @@
         listaNomes.forEach(nome => {
           if (nome.trim()) {
             const li = document.createElement("li");
-            li.innerText = nome.trim();
+            li.innerHTML = nome.trim(); // Suporta tags como <b> ou destaca nomes individuais
             listaUl.appendChild(li);
           }
         });
@@ -197,20 +205,14 @@
       }
     }
 
-    // Abrir o modal da Ficha de Limpeza interpretando tags HTML
+    // Abrir o modal da Ficha de Limpeza interpretando tags HTML e quebras de linha com ponto e vírgula
     function abrirFichaLimpeza() {
       if (!depAtual) return;
 
       document.getElementById("ficha-titulo").innerText = `Ficha: ${depAtual.nome}`;
-      
-      // Substitui o ponto e vírgula por quebra de linha <br> e usa innerHTML para processar tags como <b>
-      const materiaisTexto = depAtual.materiais 
-        ? depAtual.materiais.replace(/;/g, '<br>') 
-        : "Não especificados.";
-      
-      document.getElementById("ficha-materiais").innerHTML = materiaisTexto;
-      document.getElementById("ficha-durante").innerHTML = depAtual.instrucoes_durante || "Não especificado.";
-      document.getElementById("ficha-fim").innerHTML = depAtual.instrucoes_fim || "Não especificado.";
+      document.getElementById("ficha-materiais").innerHTML = formatarTexto(depAtual.materiais, "Não especificados.");
+      document.getElementById("ficha-durante").innerHTML = formatarTexto(depAtual.instrucoes_durante, "Não especificado.");
+      document.getElementById("ficha-fim").innerHTML = formatarTexto(depAtual.instrucoes_fim, "Não especificado.");
 
       const modal = document.getElementById("modal-ficha");
       modal.classList.remove("hidden");
