@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escala de Limpeza - Mairiporã</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Biblioteca para ler arquivos CSV com segurança -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 font-sans">
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <header class="bg-blue-800 text-white p-6 rounded-lg shadow-md mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold">Departamento de Limpeza - Mairiporã</h1>
+        <p class="text-blue-200 text-sm">Escala e Designações dos Setores</p>
+      </div>
+      <button onclick="carregarCSV()" class="bg-blue-700 hover:bg-blue-600 text-xs px-3 py-2 rounded border border-blue-400 text-white font-medium">
+        🔄 Atualizar
+      </button>
+    </header>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center py-10">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-800 border-t-transparent"></div>
+      <p class="text-gray-600 mt-2 font-medium">Carregando informações da escala...</p>
+    </div>
+
+    <!-- TELA 1: Lista dos 11 Departamentos -->
+    <div id="view-lista" class="hidden">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Selecione um Setor:</h2>
+      <div id="grid-departamentos" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </div>
+
+    <!-- TELA 2: Detalhes do Departamento -->
+    <div id="view-detalhes" class="hidden bg-white p-6 rounded-lg shadow-md">
+      <button onclick="voltarParaLista()" class="mb-4 text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
+        ← Voltar para todos os setores
+      </button>
+      
+      <h2 id="detalhe-nome" class="text-2xl font-bold text-gray-800 mb-2"></h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-lg border">
+        <div>
+          <span class="block text-xs text-gray-500 uppercase font-bold">Capitão</span>
+          <span id="detalhe-capitao" class="text-base font-semibold text-gray-800"></span>
+        </div>
+        <div>
+          <span class="block text-xs text-gray-500 uppercase font-bold">Congregação(ões)</span>
+          <span id="detalhe-congregacao" class="text-base font-semibold text-gray-800"></span>
+        </div>
+        <div>
+          <span class="block text-xs text-gray-500 uppercase font-bold">Horário / Instrução</span>
+          <span id="detalhe-instrucoes" class="text-base font-semibold text-gray-800"></span>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Irmãos Designados</h3>
+      <ul id="detalhe-voluntarios" class="list-disc list-inside space-y-1 text-gray-700 bg-white p-4 border rounded-lg">
+        <!-- Lista de voluntários inserida via JS -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Cole aqui o link do CSV gerado no "Publicar na Web" do Google Sheets
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwlgbpIK46guSX_yzwEkj040NPcv05H4uZsgh-_OR0tROrcC6fBP3VC5BuhGgU8b-BwsQHmEgNPp5F/pub?output=csv";
+
+    let dadosDepartamentos = [];
+
+    // Função para buscar e converter o CSV
+    function carregarCSV() {
+      document.getElementById("loading").classList.remove("hidden");
+      document.getElementById("view-lista").classList.add("hidden");
+
+      Papa.parse(CSV_URL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          dadosDepartamentos = results.data;
+          renderizarDepartamentos();
+          document.getElementById("loading").classList.add("hidden");
+          document.getElementById("view-lista").classList.remove("hidden");
+        },
+        error: function(err) {
+          alert("Erro ao ler o arquivo CSV. Verifique se o link está correto e publicado.");
+          console.error(err);
+        }
+      });
+    }
+
+    // Exibir cards dos departamentos
+    function renderizarDepartamentos() {
+      const container = document.getElementById("grid-departamentos");
+      container.innerHTML = "";
+
+      dadosDepartamentos.forEach(dep => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-5 rounded-lg shadow border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer transition";
+        card.onclick = () => abrirDetalhes(dep.id);
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <h3 class="font-bold text-lg text-gray-800">${dep.nome}</h3>
+            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded">${dep.congregacao || ''}</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Capitão: <strong>${dep.capitao || 'A definir'}</strong></p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Exibir os detalhes do setor
+    function abrirDetalhes(id) {
+      const dep = dadosDepartamentos.find(item => item.id === id);
+      if (!dep) return;
+
+      document.getElementById("detalhe-nome").innerText = dep.nome;
+      document.getElementById("detalhe-capitao").innerText = dep.capitao || "A definir";
+      document.getElementById("detalhe-congregacao").innerText = dep.congregacao || "Não informada";
+      document.getElementById("detalhe-instrucoes").innerText = dep.instrucoes || "Sem instruções";
+
+      const listaUl = document.getElementById("detalhe-voluntarios");
+      listaUl.innerHTML = "";
+
+      // Separa os nomes por vírgula na coluna "voluntarios"
+      const listaNomes = dep.voluntarios ? dep.voluntarios.split(";") : [];
+
+      if (listaNomes.length === 0 || !dep.voluntarios || dep.voluntarios.trim() === "" || dep.voluntarios.trim() === "-") {
+        listaUl.innerHTML = "<li class='text-gray-400 italic list-none'>Nenhum irmão designado cadastrado ainda.</li>";
+      } else {
+        listaNomes.forEach(nome => {
+          if (nome.trim()) {
+            const li = document.createElement("li");
+            li.innerText = nome.trim();
+            listaUl.appendChild(li);
+          }
+        });
+      }
+
+      document.getElementById("view-lista").classList.add("hidden");
+      document.getElementById("view-detalhes").classList.remove("hidden");
+    }
+
+    function voltarParaLista() {
+      document.getElementById("view-detalhes").classList.add("hidden");
+      document.getElementById("view-lista").classList.remove("hidden");
+    }
+
+    // Inicializa na abertura da página
+    carregarCSV();
+  </script>
+</body>
+</html>
