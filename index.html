@@ -46,28 +46,31 @@
     </div>
 
     <!-- TELA 2: Detalhes do Departamento -->
-    <div id="view-detalhes" class="hidden bg-white p-6 rounded-[28px] shadow-md">
-      <button onclick="voltarParaLista()" class="mb-4 text-lg text-blue-600 hover:underline flex items-center gap-1 font-medium">←Voltar</button>
+    <div id="view-detalhes" class="hidden bg-white p-6 rounded-[25px] shadow-md">
+      <button onclick="voltarParaLista()" class="mb-4 text-lg text-blue-600 hover:underline flex items-center gap-2 font-medium">
+  &#9664; Voltar
+</button>
+
       
       <h2 id="detalhe-nome" class="text-2xl font-bold text-gray-800 mb-2"></h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-[28px] border">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-[25px] border">
         <div>
-          <span class="block text-sm text-green-500 uppercase font-bold">Capitão</span>
-          <span id="detalhe-capitao" class="text-base text-gray-800"></span>
+          <span class="block text-sm text-green-600 uppercase font-bold">Capitão</span>
+          <span id="detalhe-capitao" class="text-base font-semibold text-gray-800"></span>
         </div>
         <div>
-          <span class="block text-sm text-green-500 uppercase font-bold">Congregação</span>
-          <span id="detalhe-congregacao" class="text-base text-gray-800"></span>
+          <span class="block text-sm text-green-600 uppercase font-bold">Congregação</span>
+          <span id="detalhe-congregacao" class="text-base font-semibold text-gray-800"></span>
         </div>
         <div>
-          <span class="block text-sm text-green-500 uppercase font-bold">Horário / Instrução</span>
-          <span id="detalhe-instrucoes" class="text-base text-gray-800"></span>
+          <span class="block text-sm text-green-600 uppercase font-bold">Horário / Instrução</span>
+          <span id="detalhe-instrucoes" class="text-base font-semibold text-gray-800"></span>
         </div>
       </div>
 
       <h3 class="text-lg font-semibold text-gray-800 mb-2">Irmãos Designados</h3>
-      <ul id="detalhe-voluntarios" class="list-disc list-inside space-y-1 text-gray-700 bg-white p-4 border rounded-[28px]">
+      <ul id="detalhe-voluntarios" class="list-disc list-inside space-y-1 text-gray-700 bg-white p-4 border rounded-[25px]">
         <!-- Lista de voluntários inserida via JS -->
       </ul>
     </div>
@@ -108,7 +111,7 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-[28px] shadow border border-gray-300 font-bold";
+        card.className = "bg-white p-5 rounded-[25px] shadow border border-gray-200 font-bold";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
@@ -120,7 +123,7 @@
     }
 
     // Exibir os detalhes do setor
-    function abrirDetalhes(id) {
+    function abrirDetalhes(id, pushHistory = true) {
       const dep = dadosDepartamentos.find(item => item.id === id);
       if (!dep) return;
 
@@ -149,12 +152,32 @@
 
       document.getElementById("view-lista").classList.add("hidden");
       document.getElementById("view-detalhes").classList.remove("hidden");
+
+      // Adiciona estado ao histórico do navegador para permitir o botão/gesto de voltar do celular
+      if (pushHistory) {
+        history.pushState({ view: 'detalhes', id: id }, '', `#${id}`);
+      }
     }
 
-    function voltarParaLista() {
+    // Voltar para a tela inicial
+    function voltarParaLista(fromPopState = false) {
       document.getElementById("view-detalhes").classList.add("hidden");
       document.getElementById("view-lista").classList.remove("hidden");
+
+      // Se o usuário clicou no botão "← Voltar" na tela, retrocede o histórico do navegador
+      if (!fromPopState && history.state && history.state.view === 'detalhes') {
+        history.back();
+      }
     }
+
+    // Capturar o gesto/botão de voltar nativo do celular
+    window.addEventListener('popstate', (event) => {
+      if (event.state && event.state.view === 'detalhes') {
+        abrirDetalhes(event.state.id, false);
+      } else {
+        voltarParaLista(true);
+      }
+    });
 
     // Inicializa na abertura da página
     carregarCSV();
