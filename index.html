@@ -101,7 +101,7 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-3xl shadow border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer transition";
+        card.className = "bg-white p-5 rounded-3xl shadow border border-gray-200 font-bold hover:border-blue-500 hover:shadow-md cursor-pointer transition";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
