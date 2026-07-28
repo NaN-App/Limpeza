@@ -12,13 +12,13 @@
 
   <div class="max-w-4xl mx-auto">
     <!-- Cabeçalho -->
-    <header class="bg-blue-800 text-white p-6 rounded-lg shadow-md mb-6 flex justify-between items-center">
+    <header class="bg-blue-800 text-white p-6 rounded-3xl shadow-md mb-6 flex justify-between items-center">
       <div>
         <h1 class="text-2xl font-bold">Departamento de Limpeza - Mairiporã</h1>
         <p class="text-blue-200 text-sm">Escala e Designações dos Setores</p>
       </div>
-      <button onclick="carregarCSV()" class="bg-blue-700 hover:bg-blue-600 text-xs px-3 py-2 rounded border border-blue-400 text-white font-medium">
-        🔄 Atualizar
+      <button onclick="carregarCSV()" class="bg-blue-700 hover:bg-blue-600 text-xs px-3 py-2 rounded-lg border border-blue-400 text-white font-medium">
+        🔄
       </button>
     </header>
 
@@ -37,20 +37,20 @@
     </div>
 
     <!-- TELA 2: Detalhes do Departamento -->
-    <div id="view-detalhes" class="hidden bg-white p-6 rounded-lg shadow-md">
+    <div id="view-detalhes" class="hidden bg-white p-6 rounded-3xl shadow-md">
       <button onclick="voltarParaLista()" class="mb-4 text-sm text-blue-600 hover:underline flex items-center gap-1 font-medium">
-        ← Voltar para todos os setores
+        ← Voltar
       </button>
       
       <h2 id="detalhe-nome" class="text-2xl font-bold text-gray-800 mb-2"></h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-lg border">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-3xl border">
         <div>
           <span class="block text-xs text-gray-500 uppercase font-bold">Capitão</span>
           <span id="detalhe-capitao" class="text-base font-semibold text-gray-800"></span>
         </div>
         <div>
-          <span class="block text-xs text-gray-500 uppercase font-bold">Congregação(ões)</span>
+          <span class="block text-xs text-gray-500 uppercase font-bold">Congregação</span>
           <span id="detalhe-congregacao" class="text-base font-semibold text-gray-800"></span>
         </div>
         <div>
@@ -60,7 +60,7 @@
       </div>
 
       <h3 class="text-lg font-semibold text-gray-800 mb-2">Irmãos Designados</h3>
-      <ul id="detalhe-voluntarios" class="list-disc list-inside space-y-1 text-gray-700 bg-white p-4 border rounded-lg">
+      <ul id="detalhe-voluntarios" class="list-disc list-inside space-y-1 text-gray-700 bg-white p-4 border rounded-3xl">
         <!-- Lista de voluntários inserida via JS -->
       </ul>
     </div>
@@ -101,14 +101,14 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-lg shadow border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer transition";
+        card.className = "bg-white p-5 rounded-3xl shadow border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer transition";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <h3 class="font-bold text-lg text-gray-800">${dep.nome}</h3>
-            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded">${dep.congregacao || ''}</span>
+            <span class="text-xs bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-lg">${dep.congregacao || ''}</span>
           </div>
-          <p class="text-xs text-gray-500 mt-2">Capitão: <strong>${dep.capitao || 'A definir'}</strong></p>
+          <p class="text-sm text-gray-500 mt-2">Capitão: <strong>${dep.capitao || 'A definir'}</strong></p>
         `;
         container.appendChild(card);
       });
