@@ -28,7 +28,6 @@
       <div>
         <h1 class="text-3xl text-center font-extrabold">Departamento de Limpeza Mairiporã</h1>
       </div>
-    
     </header>
 
     <!-- Loading -->
@@ -47,12 +46,17 @@
 
     <!-- TELA 2: Detalhes do Departamento -->
     <div id="view-detalhes" class="hidden bg-white p-6 rounded-[25px] shadow-md">
-      <button onclick="voltarParaLista()" class="mb-4 text-lg text-blue-700 hover:underline flex items-center gap-2 font-medium">
-  &#9664; Voltar
-</button>
+      <!-- Linha superior com Voltar na esquerda e Ficha de Limpeza na direita -->
+      <div class="flex justify-between items-center mb-4">
+        <button onclick="voltarParaLista()" class="text-lg text-blue-600 hover:underline flex items-center gap-2 font-medium">
+          &#9664; Voltar
+        </button>
+        <button onclick="abrirFichaLimpeza()" class="bg-[#015060] text-white px-4 py-2 rounded-[20px] text-sm font-semibold hover:bg-[#013d4a] transition flex items-center gap-1 shadow-sm">
+          📄 Ficha de Limpeza
+        </button>
+      </div>
 
-      
-      <h2 id="detalhe-nome" class="text-xl font-bold text-gray-800 mb-2"></h2>
+      <h2 id="detalhe-nome" class="text-2xl font-bold text-gray-800 mb-2"></h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 p-4 bg-gray-50 rounded-[25px] border">
         <div>
@@ -76,11 +80,43 @@
     </div>
   </div>
 
+  <!-- MODAL: Ficha de Limpeza -->
+  <div id="modal-ficha" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-[25px] p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-xl relative">
+      <div class="flex justify-between items-center mb-4 border-b pb-3">
+        <h3 id="ficha-titulo" class="text-xl font-bold text-[#015060]">Ficha de Limpeza</h3>
+        <button onclick="fecharFichaLimpeza()" class="text-gray-400 hover:text-gray-700 text-2xl font-bold px-2">&times;</button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <span class="block text-xs text-green-600 uppercase font-bold">Materiais Necessários</span>
+          <div id="ficha-materiais" class="text-sm text-gray-800 mt-1 bg-gray-50 p-3 rounded-[15px] border"></div>
+        </div>
+
+        <div>
+          <span class="block text-xs text-green-600 uppercase font-bold">Limpeza Durante o Evento</span>
+          <div id="ficha-durante" class="text-sm text-gray-800 mt-1 bg-gray-50 p-3 rounded-[15px] border"></div>
+        </div>
+
+        <div>
+          <span class="block text-xs text-green-600 uppercase font-bold">Limpeza ao Final de Cada Dia</span>
+          <div id="ficha-fim" class="text-sm text-gray-800 mt-1 bg-gray-50 p-3 rounded-[15px] border"></div>
+        </div>
+      </div>
+
+      <button onclick="fecharFichaLimpeza()" class="w-full mt-5 bg-gray-200 text-gray-800 font-bold py-2.5 rounded-[20px] hover:bg-gray-300 transition">
+        Fechar
+      </button>
+    </div>
+  </div>
+
   <script>
     // Link do CSV gerado no "Publicar na Web" do Google Sheets
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwlgbpIK46guSX_yzwEkj040NPcv05H4uZsgh-_OR0tROrcC6fBP3VC5BuhGgU8b-BwsQHmEgNPp5F/pub?output=csv";
 
     let dadosDepartamentos = [];
+    let depAtual = null;
 
     // Função para buscar e converter o CSV
     function carregarCSV() {
@@ -111,7 +147,7 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-[25px] shadow border border-gray-200 font-bold";
+        card.className = "bg-white p-5 rounded-[25px] shadow border border-gray-200 font-bold cursor-pointer hover:border-blue-500 transition";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
@@ -126,6 +162,8 @@
     function abrirDetalhes(id, pushHistory = true) {
       const dep = dadosDepartamentos.find(item => item.id === id);
       if (!dep) return;
+
+      depAtual = dep;
 
       document.getElementById("detalhe-nome").innerText = dep.nome;
       document.getElementById("detalhe-capitao").innerText = dep.capitao || "A definir";
@@ -159,12 +197,39 @@
       }
     }
 
+    // Abrir o modal da Ficha de Limpeza interpretando tags HTML
+    function abrirFichaLimpeza() {
+      if (!depAtual) return;
+
+      document.getElementById("ficha-titulo").innerText = `Ficha: ${depAtual.nome}`;
+      
+      // Substitui o ponto e vírgula por quebra de linha <br> e usa innerHTML para processar tags como <b>
+      const materiaisTexto = depAtual.materiais 
+        ? depAtual.materiais.replace(/;/g, '<br>') 
+        : "Não especificados.";
+      
+      document.getElementById("ficha-materiais").innerHTML = materiaisTexto;
+      document.getElementById("ficha-durante").innerHTML = depAtual.instrucoes_durante || "Não especificado.";
+      document.getElementById("ficha-fim").innerHTML = depAtual.instrucoes_fim || "Não especificado.";
+
+      const modal = document.getElementById("modal-ficha");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    // Fechar o modal da Ficha de Limpeza
+    function fecharFichaLimpeza() {
+      const modal = document.getElementById("modal-ficha");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
     // Voltar para a tela inicial
     function voltarParaLista(fromPopState = false) {
+      fecharFichaLimpeza();
       document.getElementById("view-detalhes").classList.add("hidden");
       document.getElementById("view-lista").classList.remove("hidden");
 
-      // Se o usuário clicou no botão "← Voltar" na tela, retrocede o histórico do navegador
       if (!fromPopState && history.state && history.state.view === 'detalhes') {
         history.back();
       }
@@ -172,6 +237,7 @@
 
     // Capturar o gesto/botão de voltar nativo do celular
     window.addEventListener('popstate', (event) => {
+      fecharFichaLimpeza();
       if (event.state && event.state.view === 'detalhes') {
         abrirDetalhes(event.state.id, false);
       } else {
