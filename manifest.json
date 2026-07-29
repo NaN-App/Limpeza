@@ -1,0 +1,17 @@
+{
+  "name": "Departamento de Limpeza Mairiporã",
+  "short_name": "Limpeza",
+  "description": "Escala e Fichas de Limpeza para Mairiporã",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#015060",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
