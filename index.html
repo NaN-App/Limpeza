@@ -7,7 +7,7 @@
   
   <!-- Configurações PWA -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#015060">
+  <meta name="theme-color" content="#f6f6f6">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Limpeza">
@@ -56,11 +56,11 @@
     <div id="view-detalhes" class="hidden bg-white p-6 rounded-[25px] shadow-md">
       <!-- Linha superior com Voltar na esquerda e Ficha de Limpeza na direita -->
       <div class="flex justify-between items-center mb-4">
-        <button onclick="voltarParaLista()" class="text-lg text-blue-600 hover:underline flex items-center gap-2 font-medium">
-          &#9664; Voltar
+        <button onclick="voltarParaLista()" class="text-lg text-blue-600  flex items-center gap-2 font-medium">
+          ◀ Voltar
         </button>
-        <button onclick="abrirFichaLimpeza()" class="bg-[#015060] text-white px-4 py-2 rounded-[20px] text-sm font-semibold hover:bg-[#013d4a] transition flex items-center gap-1 shadow-sm">
-          📄 Ficha de Limpeza
+        <button onclick="abrirFichaLimpeza()" class="text-lg text-blue-600  flex items-center gap-2 font-medium">
+          Ficha de Limpeza ▶
         </button>
       </div>
 
@@ -93,7 +93,7 @@
     <div class="bg-white rounded-[25px] p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-xl relative">
       <div class="flex justify-between items-center mb-4 border-b pb-3">
         <h3 id="ficha-titulo" class="text-xl font-bold text-[#015060]">Ficha de Limpeza</h3>
-        <button onclick="fecharFichaLimpeza()" class="text-gray-400 hover:text-gray-700 text-2xl font-bold px-2">&times;</button>
+        <button onclick="fecharFichaLimpeza()" class="text-gray-400  text-2xl font-bold px-2">&times;</button>
       </div>
 
       <div class="space-y-4">
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <button onclick="fecharFichaLimpeza()" class="w-full mt-5 bg-gray-200 text-gray-800 font-bold py-2.5 rounded-[20px] hover:bg-gray-300 transition">
+      <button onclick="fecharFichaLimpeza()" class="w-full mt-5 bg-gray-200 text-gray-800 font-bold py-2.5 rounded-[20px]  transition">
         Fechar
       </button>
     </div>
@@ -163,7 +163,7 @@
 
       dadosDepartamentos.forEach(dep => {
         const card = document.createElement("div");
-        card.className = "bg-white p-5 rounded-[25px] shadow border border-gray-200 font-bold cursor-pointer hover:border-blue-500 transition";
+        card.className = "bg-white p-5 rounded-[25px] shadow border border-gray-200 font-bold cursor-pointer  transition";
         card.onclick = () => abrirDetalhes(dep.id);
         card.innerHTML = `
           <div class="flex justify-between items-start">
