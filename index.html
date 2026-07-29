@@ -5,10 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escala de Limpeza - Mairiporã</title>
   
-  <!-- Importando a fonte Google Sans -->
+  <!-- Configurações PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#015060">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Limpeza">
+  <link rel="apple-touch-icon" href="./icon_512.png">
+
+  <!-- Importando a fonte Cabin do Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Biblioteca para ler arquivos CSV com segurança -->
@@ -16,7 +24,7 @@
 
   <style>
     body {
-      font-family: 'Google Sans', sans-serif;
+      font-family: 'Cabin', sans-serif;
     }
   </style>
 </head>
@@ -26,7 +34,7 @@
     <!-- Cabeçalho -->
     <header class="bg-[#015060] text-white p-6 rounded-[30px] shadow-md mb-6 flex justify-between items-center">
       <div>
-        <h1 class="text-[32px] text-center font-bold">Departamento de Limpeza Mairiporã</h1>
+        <h1 class="text-[32px] text-center font-extrabold">Departamento de Limpeza Mairiporã</h1>
       </div>
     </header>
 
@@ -181,7 +189,6 @@
       const listaUl = document.getElementById("detalhe-voluntarios");
       listaUl.innerHTML = "";
 
-      // Separa os nomes por ponto e vírgula na coluna "voluntarios"
       const listaNomes = dep.voluntarios ? dep.voluntarios.split(";") : [];
 
       if (listaNomes.length === 0 || !dep.voluntarios || dep.voluntarios.trim() === "" || dep.voluntarios.trim() === "-") {
@@ -199,7 +206,6 @@
       document.getElementById("view-lista").classList.add("hidden");
       document.getElementById("view-detalhes").classList.remove("hidden");
 
-      // Adiciona estado ao histórico do navegador para permitir o botão/gesto de voltar do celular
       if (pushHistory) {
         history.pushState({ view: 'detalhes', id: id }, '', `#${id}`);
       }
@@ -246,6 +252,15 @@
         voltarParaLista(true);
       }
     });
+
+    // Registrar o Service Worker para suporte a PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registrado com sucesso! Scope:', reg.scope))
+          .catch(err => console.error('Falha ao registrar Service Worker:', err));
+      });
+    }
 
     // Inicializa na abertura da página
     carregarCSV();
